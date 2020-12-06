@@ -29,6 +29,7 @@ _LOGGER = logging.getLogger(__name__)
 
 _URL = 'https://www.semsportal.com/api/v1/Common/CrossLogin'
 _PowerStationURL = 'https://www.semsportal.com/api/v1/PowerStation/GetMonitorDetailByPowerstationId'
+#_PowerStationURL ='https://www.semsportal.com/api/v1/PowerStation/GetPowerflow'
 _RequestTimeout = 30 # seconds
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -106,13 +107,28 @@ class SemsSensor(Entity):
 
             # Process response as JSON
             jsonResponseFinal = json.loads(response.text)
+            
+         #   _LOGGER.error(jsonResponseFinal)
+         #   _LOGGER.error(jsonResponseFinal["data"]["powerflow"])
 
             _LOGGER.debug("REST Response Recieved")
+            
 
             for key, value in jsonResponseFinal["data"]["inverter"][0]["invert_full"].items():
-                if(key is not None and value is not None):
-                    self._attributes[key] = value
-                    _LOGGER.debug("Updated attribute %s: %s", key, value)
+                    if(key is not None and value is not None):
+                        self._attributes[key] = value
+                        _LOGGER.debug("Updated attribute %s: %s", key, value)
+                        
+            for key, value in jsonResponseFinal["data"]["powerflow"].items():
+                    if(key is not None and value is not None):
+                        self._attributes[key] = value
+                        _LOGGER.debug("Updated attribute %s: %s", key, value)
+                    
         except Exception as exception:
             _LOGGER.error(
                 "Unable to fetch data from SEMS. %s", exception)
+                
+                
+
+                
+                
